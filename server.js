@@ -20,7 +20,7 @@ app.use(
 app.use("/api/auth", authRoutes);
 app.use("/api/blog", blogRoutes);
 
-app.get("/api/health", (req, res) => {
+app.get("/", (req, res) => {
   res.status(200).json({
     status: "OK",
     message: "Backend is running successfully!",
