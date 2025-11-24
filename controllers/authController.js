@@ -1,8 +1,8 @@
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import validator from "validator";
 
-// Helper function to generate tokens
 const generateTokens = (userId) => {
   const accessToken = jwt.sign({ id: userId }, process.env.JWT_SECRET, {
     expiresIn: "15m",
@@ -23,6 +23,27 @@ const generateTokens = (userId) => {
 export const register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
+
+    if (!name || !email || !password)
+      return res.status(400).json({ message: "All fields are required" });
+
+    if (!validator.isEmail(email))
+      return res.status(400).json({ message: "Invalid email format" });
+
+    if (
+      !validator.isStrongPassword(password, {
+        minLength: 8,
+        minLowercase: 1,
+        minUppercase: 1,
+        minNumbers: 1,
+        minSymbols: 1,
+      })
+    ) {
+      return res.status(400).json({
+        message:
+          "Password must include uppercase, lowercase, number, and symbol",
+      });
+    }
 
     // User exists?
     const existingUser = await User.findOne({ email });
@@ -63,6 +84,9 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    if (!email || !password)
+      return res.status(400).json({ message: "All fields are required" });
 
     // Check user
     const user = await User.findOne({ email });
