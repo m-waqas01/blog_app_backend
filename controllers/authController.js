@@ -41,7 +41,7 @@ export const register = async (req, res) => {
     ) {
       return res.status(400).json({
         message:
-          "Password must include uppercase, lowercase, number, and symbol",
+          "Password atleast 8 characters and must include uppercase, lowercase, number, and symbol",
       });
     }
 
